@@ -6,7 +6,7 @@ This roadmap balances daily development goals with dedicated daily review sessio
 
 ## 🛠️ Phase 1: Express REST API & Database Foundation (Days 1–5)
 
-### Day 1: Project Initialization & Health Verification
+### Day 1: Project Initialization & Health Verification  +++++
 * **Development Tasks:**
   * Initialize Node environment with ES Modules (`type: "module"`).
   * Configure environment variables (`.env`) and `.gitignore`.
@@ -17,7 +17,7 @@ This roadmap balances daily development goals with dedicated daily review sessio
 
 ---
 
-### Day 2: Database Connection & User Schema
+### Day 2: Database Connection & User Schema  +++++
 * **Development Tasks:**
   * Configure Mongoose connection in `config/db.js`.
   * Define `User` model with validation rules (email, hashed password).

@@ -21,14 +21,14 @@ const userSchema = new mongoose.Schema(
         },
     },
     {
-        timestamp: true, // Automatically manages createdAt and updatedAt fields
+        timestamps: true, // Automatically manages createdAt and updatedAt fields
     }
 );
 
 // Encrypt password using BEFORE saving user
 userSchema.pre('save', async function (next) {
     // Only hash the password if it has been modified (or is new)
-    if (!this. isModified('password')) {
+    if (!this.isModified('password')) {
         next();
     }
 
@@ -36,6 +36,11 @@ userSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
+
+// Method to compare entered password with hashed password in database 🔑
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 
