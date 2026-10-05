@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema(
             required: [true, 'Please add a password'],
             minlength: 6,
         },
+        
+        isAdmin: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
     },
     {
         timestamps: true, // Automatically manages createdAt and updatedAt fields
@@ -26,10 +32,11 @@ const userSchema = new mongoose.Schema(
 );
 
 // Encrypt password using BEFORE saving user
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     // Only hash the password if it has been modified (or is new)
+    // If password was not modified, exit early
     if (!this.isModified('password')) {
-        next();
+        return;
     }
 
     // Generate the salt and Hash the pasword

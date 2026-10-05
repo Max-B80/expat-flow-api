@@ -20,13 +20,24 @@ export const protect = async (req, res, next) => {
             req.user = await User.findById(decoded.id).select('-password');
 
             // 5. Call next() to pass control to the next middleware or controller 🚦
-            next();
+            return next();
         } catch (error) {
             res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
-
+    // This ONLY runs if there was no Bearer header attached
     if (!token) {
         res.status(401).json({ message: 'Not authorized, no token' });
+    }
+};
+
+
+//  Admin Middleware
+export const admin = (req, res, next) => {
+    // req.user is available because protect runs right before admin!
+    if (req.user && req.user.isAdmin) {
+        next(); // 🟢 User is an admin, proceed to the route handler
+    } else {
+        res.status(403).json({ message: 'Not authorized as an admin' }); // 🔴 Forbidden
     }
 };
