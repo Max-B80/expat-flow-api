@@ -28,7 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 
 // Mount visa routes
-app.use('/api/visas', visaRoutes);
+app.use('/api/visas', visaRoutes); // connect visa routes
 
 // Health check route
 app.get('/api/health', (req, res) => {

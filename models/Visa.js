@@ -27,9 +27,12 @@ const visaSchema = new mongoose.Schema(
         notes: {
             type: String,
         },
-
-    },
-    {
+        document: { // 👈 ADDED: Stores the Cloudinary file URL
+            type: String,
+            default: null,
+        },
+        },
+        {
         timestamps: true, // Automatically manages createdAt and updatedAt
     }
 
