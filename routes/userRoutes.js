@@ -1,21 +1,26 @@
 import express from 'express';
-import { getUserProfile, updateUserProfile, getUsers, registerUser, authUser } from '../controllers/userController.js';
+import {
+    getUserProfile,
+    updateUserProfile,
+    getUsers,
+    registerUser,
+    authUser,
+} from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Public route for user login 🔑
-router.post('/login', authUser); // 👈 2. Add the login route
+// Public authentication endpoints 🔓
+router.post('/register', registerUser);
+router.post('/login', authUser);
 
-// Profile route handles both GET (fetch) and PUT (update)
-router
-    .route('/profile')
+// Protected user profile endpoints 🔒
+router.route('/profile')
     .get(protect, getUserProfile)
     .put(protect, updateUserProfile);
 
-// Admin-only route
+// Admin-only endpoints 👑
 router.route('/')
-    .post(registerUser)              // 🔓 Public route to register
-    .get(protect, admin, getUsers);  // 🔒 Admin-only route to fetch users
+    .get(protect, admin, getUsers);
 
 export default router;

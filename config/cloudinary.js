@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import multer from 'multer';
@@ -14,7 +15,7 @@ const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'expat-visas', // Folder name in Cloudinary
-        allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'], // Allowed file types
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'pdf'], // Allowed file types
     },
 });
 
