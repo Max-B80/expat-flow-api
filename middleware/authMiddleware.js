@@ -1,43 +1,18 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import { clerkClient, getAuth } from '@clerk/express';
+import { resolveLocalUser } from '../utils/clerkUsers.js';
 
 export const protect = async (req, res, next) => {
-    let token;
-
-    // 1. Check if the Authorization header exists and starts with "Bearer" 📬
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        try {
-            // 2. Extract the token from the "Bearer <token>" string ✂️
-            token = req.headers.authorization.split(' ')[1];
-
-            // 3. Verify the token using your JWT secret 🔑
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            // 4. Find the user by ID and attach it to the request object (excluding password) 👤
-            req.user = await User.findById(decoded.id).select('-password');
-
-            // 5. Call next() to pass control to the next middleware or controller 🚦
-            return next();
-        } catch (error) {
-            res.status(401).json({ message: 'Not authorized, token failed' });
-        }
-    }
-    // This ONLY runs if there was no Bearer header attached
-    if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
-    }
+  try {
+    const { userId, isAuthenticated } = getAuth(req);
+    if (!isAuthenticated || !userId) return res.status(401).json({ message: 'Please sign in to continue.' });
+    req.user = await resolveLocalUser(userId, (id) => clerkClient.users.getUser(id));
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
-
-//  Admin Middleware
 export const admin = (req, res, next) => {
-    // req.user is available because protect runs right before admin!
-    if (req.user && req.user.isAdmin) {
-        next(); // 🟢 User is an admin, proceed to the route handler
-    } else {
-        res.status(403).json({ message: 'Not authorized as an admin' }); // 🔴 Forbidden
-    }
+  if (!req.user?.isAdmin) return res.status(403).json({ message: 'Not authorized as an admin.' });
+  next();
 };
